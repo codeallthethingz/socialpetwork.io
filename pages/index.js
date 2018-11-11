@@ -1,7 +1,14 @@
-import cowsay from 'cowsay-browser'
+import cowsay from 'cowsay-browser';
+import NavBar from '../components/NavBar';
+import Layout from '../components/Layout';
+const { parse } = require("url");
 
-export default () => (
-  <pre>
-    {cowsay.say({ text: 'hi there!' })}
-  </pre>
+const Index = () => (
+  <Layout>
+    <pre>
+      {cowsay.say({ text: 'mooooo' })}
+    </pre>
+  </Layout>
 )
+
+export default Index
