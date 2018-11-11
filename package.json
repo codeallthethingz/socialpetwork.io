@@ -2,7 +2,6 @@
   "name": "socialpetwork.io",
   "version": "1.0.0",
   "description": "",
-  "main": "next.config.js",
   "dependencies": {
     "cowsay-browser": "^1.1.8",
     "isomorphic-unfetch": "^3.0.0",
@@ -16,12 +15,9 @@
     "build": "next build",
     "start": "next start"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/codeallthethingz/socialpetwork.io.git"
-  },
+  "repository": "git+https://github.com/codeallthethingz/socialpetwork.io.git",
   "keywords": [],
-  "author": "",
+  "author": "Will Warren <will.warren@groupbyinc.com>",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/codeallthethingz/socialpetwork.io/issues"

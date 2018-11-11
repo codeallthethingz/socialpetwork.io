@@ -11,7 +11,7 @@ const SignUp = () => (
       <div id="mc_embed_signup_scroll">
         <div className="mc-field-group">
           <label htmlFor="mce-EMAIL">Email Address </label>
-          <input type="email" defaultValue="your@email.com" name="EMAIL" className="required email" id="mce-EMAIL" />
+          <input type="email" placeholder="your@email.com" name="EMAIL" className="required email" id="mce-EMAIL" />
         </div>
         <div id="mce-responses" className="clear">
           <div className="response" id="mce-error-response" style={{display: 'none'}} />

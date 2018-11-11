@@ -1,7 +1,9 @@
 {
   "version": 2,
   "builds": [
+    { "src": "api/**/index.js", "use": "@now/node" },
     { "src": "static/**", "use": "@now/static"},
     { "src": "next.config.js", "use": "@now/next" }
-  ]
+  ], 
+  "alias": ["www.socialpetwork.io", "socialpetwork.io"]
 }
