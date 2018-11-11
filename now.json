@@ -1,13 +1,6 @@
 {
-   "version": 2, 
-   "builds": [
-      { "src": "next.config.js", "use": "@now/next" }
-   ],
-   "dependencies": {
-    "cowsay-browser": "^1.1.8",
-    "next": "^7.0.2",
-    "react": "^16.6.1",
-    "react-dom": "^16.6.1",
-    "webpack": "^2.5.1"
-  }
+  "version": 2,
+  "builds": [
+    { "src": "next.config.js", "use": "@now/next" }
+  ]
 }
