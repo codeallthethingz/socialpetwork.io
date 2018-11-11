@@ -3,7 +3,7 @@
    "builds": [
       { "src": "*.js", "use": "@now/node" },
       { "src": "index.html", "use": "@now/static" },
-      { "src": "img/*", "use": "@now/static" }
+      { "src": "img/*", "use": "@now/static" },
       { "src": "css/*", "use": "@now/static" }
    ] 
 }
