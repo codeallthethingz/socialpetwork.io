@@ -40,5 +40,9 @@
     "env": [
       "jest"
     ]
+  },
+  "jest": {
+    "coverageDirectory": "./coverage/",
+    "collectCoverage": true
   }
 }
