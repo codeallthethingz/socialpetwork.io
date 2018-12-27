@@ -1,0 +1,31 @@
+{
+  "rules": [
+    {
+      "pathname": "/api/recentPosts/index.js",
+      "method": [
+        "GET",
+        "POST",
+        "OPTIONS"
+      ],
+      "dest": "http://localhost:3001"
+    },
+    {
+      "pathname": "/api/post/index.js",
+      "method": [
+        "GET",
+        "POST",
+        "OPTIONS"
+      ],
+      "dest": "http://localhost:3002"
+    },
+    {
+      "pathname": "/",
+      "method": [
+        "GET",
+        "POST",
+        "OPTIONS"
+      ],
+      "dest": "http://localhost:3000"
+    }
+  ]
+}

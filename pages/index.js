@@ -1,11 +1,10 @@
-import SignUp from '../components/SignUp';
-import Layout from '../components/Layout';
-const { parse } = require("url");
+import SignUp from '../components/SignUp'
+import Layout from '../components/Layout'
 
 const Index = () => (
   <Layout>
-    <img src="/static/img/dog-splash.jpg" height="200"/>
-    <SignUp/>
+    <img src='/static/img/dog-splash.jpg' height='200' />
+    <SignUp />
   </Layout>
 )
 
