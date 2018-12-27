@@ -30,7 +30,7 @@ jobs:
       # run tests!
       - run: npm test
 
-      #- run: node ./node_modules/.bin/codecov -t $CODECOV_TOKEN
+      - run: node ./node_modules/.bin/codecov -t $CODECOV_TOKEN
 
   deploy-to-now:
     working_directory: ~/socialpetwork.io
