@@ -1,71 +1,82 @@
+import { Field, Form, Formik } from 'formik'
 import React, { Component } from 'react'
-import { Formik, Field } from 'formik'
-import * as Yup from 'yup'
+import Dropzone from 'react-dropzone'
+import * as yup from 'yup'
+import classNames from 'classnames'
+import Thumb from './Thumb'
 import axios from 'axios'
+import FormData from 'form-data'
 
 class CreatePost extends Component {
-  constructor () {
-    super()
+  onSubmit = async values => {
+    let formData = new FormData()
 
-    this.state = {
+    formData.append('title', values.title)
 
+    for (let i = 0; i < values.files.length; i++) {
+      formData.append(`${values.files[i]}`, values.files[i])
     }
+
+    var res = await axios({
+      method: 'post',
+      url: '/api/post/index.js',
+      data: formData,
+      config: { headers: { 'Content-Type': 'multipart/form-data' } }
+    })
+    this.props.onChange()
+    console.log(res)
+  }
+
+  // example of validation with yup
+  getSchema = () => {
+    return yup.object().shape({
+      files: yup.array().required(),
+      title: yup.string().required()
+    })
+  }
+  onDrop (values, setFieldValue, acceptedFiles) {
+    console.log('here', values)
+    setFieldValue('files', values.files.concat(acceptedFiles))
   }
 
   render () {
-    return (<Formik initialValues={{ title: '' }}
-      onSubmit={async (values, { setSubmitting }) => {
-        var res = await axios.post('/api/post/index.js', values)
-        console.log(res)
-        setSubmitting(false)
-      }}
-      validationSchema={Yup.object().shape({
-        title: Yup.string()
-          .required('Required'),
-        url: Yup.string()
-          .required('Required')
-      })}
-    >
-      {props => {
-        const {
-          touched,
-          errors,
-          isSubmitting,
-          handleSubmit
-        } = props
-        return (
-          <form onSubmit={handleSubmit}>
-            <label htmlFor='title' style={{ display: 'block' }}>Title</label>
-            <Field id='title' name='title' placeholder='Title' className={errors.title && touched.title ? 'text-input error' : 'text-input'} />
-            {errors.title && touched.title && <div className='input-feedback'>{errors.title}</div>}
+    return (
+      <Formik
+        initialValues={{ files: [], title: '' }}
+        validationSchema={this.getSchema}
+        onSubmit={this.onSubmit}
 
-            <label htmlFor='url' style={{ display: 'block' }}>URL</label>
-            <Field id='url' name='url' placeholder='URL' className={errors.title && touched.title ? 'text-input error' : 'text-input'} />
-            {errors.url && touched.url && <div className='input-feedback'>{errors.url}</div>}
+        render={({ errors, setFieldValue, values }) => (
+          <Form>
+            <Field label='Title' name='title' />
+            {errors.title}
 
-            <button type='submit' disabled={isSubmitting || Object.keys(errors).length > 0}>
-              Submit
-            </button>
-            <DisplayFormikState {...props} />
-          </form>
-        )
-      }}
-    </Formik>)
+            <Dropzone accept='image/*' onDrop={(acceptedFiles) => { this.onDrop(values, setFieldValue, acceptedFiles) }}>
+              {({ getRootProps, getInputProps, isDragActive }) => {
+                var thumbs = values && values.files ? values.files.map((file, i) => (<Thumb key={i} file={file} />)) : []
+
+                return (
+                  <div
+                    {...getRootProps()}
+                    className={classNames('dropzone', { 'dropzone--isActive': isDragActive })}
+                  >
+                    <input {...getInputProps()} />
+                    {
+                      isDragActive
+                        ? <p>Drop files here...</p>
+                        : <p>Try dropping some files here, or click to select files to upload.</p>
+                    }
+                    {thumbs}
+                  </div>
+                )
+              }}
+            </Dropzone>
+            {errors.files}
+            <button type='Submit'>Submit</button>
+          </Form>
+        )}
+      />
+    )
   }
 }
 export default CreatePost
-
-export const DisplayFormikState = props =>
-  <div style={{ margin: '1rem 0' }}>
-    <h3 style={{ fontFamily: 'monospace' }} />
-    <pre
-      style={{
-        background: '#f6f8fa',
-        fontSize: '.65rem',
-        padding: '.5rem'
-      }}
-    >
-      <strong>props</strong> ={' '}
-      {JSON.stringify(props, null, 2)}
-    </pre>
-  </div>

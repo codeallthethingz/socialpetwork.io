@@ -1,10 +1,10 @@
-import SignUp from '../components/SignUp'
+import RecentPosts from '../components/RecentPosts'
 import Layout from '../components/Layout'
+// import CreatePost from '../components/CreatePost'
 
 const Index = () => (
   <Layout>
-    <img src='/static/img/dog-splash.jpg' height='200' />
-    <SignUp />
+    <RecentPosts />
   </Layout>
 )
 

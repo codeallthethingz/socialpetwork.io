@@ -1,23 +1,123 @@
 const { MongoClient } = require('mongodb')
-const { json, send } = require('micro')
+const { send } = require('micro')
+const { Base64 } = require('js-base64')
+const fs = require('fs')
+const util = require('util')
+const { Storage } = require('@google-cloud/storage')
+const writeFile = util.promisify(fs.writeFile)
+const deleteFile = util.promisify(fs.unlink)
+const formidable = require('formidable')
+const imageType = require('image-type')
+const readChunk = require('read-chunk')
+const md5File = require('md5-file/promise')
+const debug = require('debug')('socialpetwork-api:post:debug')
+
+var storage = null
 
 var mongoConnection = process.env.MONGO_CONNECTION
 var mongoWriterPassword = process.env.MONGO_WRITER_PASSWORD
+var gcpStorageCredentialString = process.env.GCP_STORAGE_CREDENTIALS
+
+async function saveFile () {
+  const str = gcpStorageCredentialString
+  const secret = Buffer.from(str)
+
+  await writeFile('/tmp/gcpStorageCredentials.json', Base64.decode(secret))
+
+  storage = new Storage({
+    projectId: 'focus-heuristic-220016',
+    keyFilename: '/tmp/gcpStorageCredentials.json'
+  })
+}
 
 module.exports = async (req, res) => {
-  var url = 'mongodb://writer:' + mongoWriterPassword + '@' + mongoConnection
-  console.log('url', url)
-  var client = await MongoClient.connect(url)
-  const db = client.db('socialpetwork-production')
-  var posts = db.collection('posts')
-  const data = await json(req)
-  var record = {
-    title: data.title,
-    media: { type: 'image', url: data.url },
-    epoch: new Date().getTime()
-  }
-  var result = await posts.insertOne(record)
-  console.log(result)
-  client.close()
-  send(res, 200, result)
+  await saveFile()
+
+  return new Promise(function (resolve, reject) {
+    var form = new formidable.IncomingForm()
+    form.parse(req, async function (err, fields, files) {
+      if (err) return reject(err)
+
+      debug('files', files)
+
+      var keys = Object.keys(files)
+      debug('1 keys', keys)
+      var media = []
+      for (var i = 0; i < keys.length; i++) {
+        var path = files[keys[i]].path
+
+        const buffer = readChunk.sync(path, 0, 12)
+        var hash = await md5File(path)
+
+        var typeOfImage = imageType(buffer)
+        if (!typeOfImage) {
+          reject(new Error('not an image'))
+        }
+        debug(JSON.stringify(files[keys[i]]))
+
+        var bucket = storage.bucket('socialpetwork-images')
+        const file = bucket.file(hash)
+
+        var fileAlreadyInGoogleStorage = await file.exists()
+        debug('filealreadinginstorage: ', fileAlreadyInGoogleStorage[0])
+        if (!fileAlreadyInGoogleStorage[0]) {
+          debug('uploading', path)
+          try {
+            var response = await bucket.upload(path, {
+              destination: hash,
+              gzip: true,
+              metadata: {
+                cacheControl: 'public, max-age=31536000',
+                contentType: typeOfImage.mime
+              }
+            })
+          } catch (error) {
+            reject(error)
+          }
+        } else {
+          debug('file found in GCP storage, not recreating')
+        }
+        debug('deleting file: ', path)
+        await deleteFile(path)
+        debug('hash', hash)
+        media.push({ type: 'image', hash: hash, mimeType: typeOfImage.mime })
+        debug(response)
+        debug('uploaded')
+      }
+      var url = 'mongodb://writer:' + mongoWriterPassword + '@' + mongoConnection
+      debug('connecting to mongo', url)
+      var client = await MongoClient.connect(url, { useNewUrlParser: true })
+      debug('connected to mongo')
+      const db = client.db('socialpetwork-production')
+      debug('got db')
+      var posts = db.collection('posts')
+      debug('got collection')
+      // const data = await json(req)
+      // debug('got data', data)
+      var record = {
+        title: fields.title,
+        media: media,
+        epoch: new Date().getTime()
+      }
+      debug('record', record)
+      debug('inserting')
+
+      var result = await posts.insertOne(record)
+      if (result.err) reject(result.err)
+      debug('err from mongo: ', err)
+      debug('result from mongo: ', result.insertedId)
+      record._id = result.insertedId
+      client.close()
+      resolve(record)
+    })
+  }).then(function (result) {
+    debug('then resolved. sending response')
+    send(res, 200, {
+      data: {
+        inserted: result
+      }
+    })
+  }).catch(function (error) {
+    send(res, 500, error)
+  })
 }
