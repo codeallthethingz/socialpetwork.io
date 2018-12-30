@@ -1,0 +1,59 @@
+body {
+  font-size: 0.7em;
+}
+
+.navbar {
+  padding-top: 0.2em;
+  padding-bottom: 0.2em;
+}
+
+#createPost {
+  padding: 3px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  width: 400px;
+}
+
+#createPost textarea {
+  width: 100%;
+  height: 60px;
+}
+
+.dropzone {
+  border-radius: 5px;
+  border: 1px dashed green;
+  padding: 10px;
+  margin-bottom: 5px;
+}
+
+#recentPosts ul, #recentPosts li {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+}
+
+#recentPosts ul {
+  margin-top: 40px;
+}
+
+#recentPosts li {
+  margin-bottom: 10px;
+  margin-right: 20px;
+  list-style-type: none;
+  width: auto;
+  max-width: 300px;
+  display: inline-block;
+  border: 1px solid #dddddd;
+  padding: 5px;
+}
+
+#recentPosts li p {
+  margin-bottom: 15px;
+  width: 100%;
+  color: #666666;
+  padding: 4px;
+}
+
+time {
+  font-style: italic;
+  color: #AAAAAA;
+}

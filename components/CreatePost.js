@@ -8,7 +8,7 @@ import axios from 'axios'
 import FormData from 'form-data'
 
 class CreatePost extends Component {
-  onSubmit = async values => {
+  onSubmit = async (values, { resetForm }) => {
     let formData = new FormData()
 
     formData.append('title', values.title)
@@ -17,65 +17,59 @@ class CreatePost extends Component {
       formData.append('file' + i, values.files[i])
     }
 
-    var res = await axios({
+    await axios({
       method: 'post',
       url: '/api/post/index.js',
       data: formData,
       config: { headers: { 'Content-Type': 'multipart/form-data' } }
     })
+    resetForm()
     this.props.onChange()
-    console.log(res)
   }
 
   // example of validation with yup
   getSchema = () => {
     return yup.object().shape({
-      files: yup.array().required(),
+      files: yup.array(),
       title: yup.string().required()
     })
   }
   onDrop (values, setFieldValue, acceptedFiles) {
-    console.log('here', values)
     setFieldValue('files', values.files.concat(acceptedFiles))
   }
 
   render () {
     return (
-      <Formik
-        initialValues={{ files: [], title: '' }}
-        validationSchema={this.getSchema}
-        onSubmit={this.onSubmit}
+      <div id='createPost'>
+        <Formik
+          initialValues={{ files: [], title: '' }}
+          validationSchema={this.getSchema}
+          onSubmit={this.onSubmit}
+          render={({ errors, setFieldValue, values }) => (
+            <Form>
+              Story
+              <Field component='textarea' label='Title' name='title' />
 
-        render={({ errors, setFieldValue, values }) => (
-          <Form>
-            <Field label='Title' name='title' />
-            {errors.title}
-
-            <Dropzone accept='image/*' onDrop={(acceptedFiles) => { this.onDrop(values, setFieldValue, acceptedFiles) }}>
-              {({ getRootProps, getInputProps, isDragActive }) => {
-                var thumbs = values && values.files ? values.files.map((file, i) => (<Thumb key={i} file={file} />)) : []
-
-                return (
-                  <div
-                    {...getRootProps()}
-                    className={classNames('dropzone', { 'dropzone--isActive': isDragActive })}
-                  >
-                    <input {...getInputProps()} />
-                    {
-                      isDragActive
-                        ? <p>Drop files here...</p>
-                        : <p>Try dropping some files here, or click to select files to upload.</p>
-                    }
-                    {thumbs}
-                  </div>
-                )
-              }}
-            </Dropzone>
-            {errors.files}
-            <button type='Submit'>Submit</button>
-          </Form>
-        )}
-      />
+              <Dropzone accept='image/*' onDrop={(acceptedFiles) => { this.onDrop(values, setFieldValue, acceptedFiles) }}>
+                {({ getRootProps, getInputProps, isDragActive }) => {
+                  var thumbs = values && values.files ? values.files.map((file, i) => (<Thumb key={i} file={file} />)) : []
+                  return (
+                    <div {...getRootProps()} className={classNames('dropzone', { 'dropzone--isActive': isDragActive })} >
+                      <input {...getInputProps()} />
+                      { values.files.length === 0 &&
+                      <p>Drop photos here or click to add</p>
+                      }
+                      { thumbs }
+                    </div>
+                  )
+                }}
+              </Dropzone>
+              {errors.files}
+              <button type='Submit'>Post</button>
+            </Form>
+          )}
+        />
+      </div>
     )
   }
 }

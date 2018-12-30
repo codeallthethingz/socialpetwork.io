@@ -19,6 +19,7 @@
     "react-dom": "^16.6.1",
     "react-dropzone": "^8.0.3",
     "react-formik-ui": "^0.3.1",
+    "react-moment": "^0.8.4",
     "read-chunk": "^3.0.0",
     "yup": "^0.26.6"
   },

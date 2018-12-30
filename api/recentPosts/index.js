@@ -13,9 +13,9 @@ module.exports = async (req, res) => {
     var client = await MongoClient.connect(url, { useNewUrlParser: true })
     const db = client.db('socialpetwork-production')
     var posts = db.collection('posts')
-    var recent = await posts.find({}).sort({ epoch: -1 }).toArray()
+    var recent = await posts.find({}).sort({ epoch: -1 }).limit(10).toArray()
     client.close()
-    log.debug('Recent listings: %j', recent)
+    log.debug('Recent listings: %d', recent.length)
 
     send(res, 200, {
       data: {
