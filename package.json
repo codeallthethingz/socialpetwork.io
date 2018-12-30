@@ -6,7 +6,7 @@
     "@google-cloud/storage": "^2.3.4",
     "axios": "^0.18.0",
     "classnames": "^2.2.6",
-    "debug": "^4.1.1",
+    "debug-with-levels": "0.0.2",
     "form-data": "^2.3.3",
     "formidable": "^1.2.1",
     "formik": "^1.4.1",

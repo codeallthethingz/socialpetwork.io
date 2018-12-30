@@ -1,8 +1,9 @@
+import RecentPosts from '../components/RecentPosts'
 import Layout from '../components/Layout'
 
 const Index = () => (
   <Layout>
-    <div>In progress</div>
+    <RecentPosts />
   </Layout>
 )
 

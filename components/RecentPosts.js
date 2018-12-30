@@ -33,8 +33,8 @@ class RecentPosts extends Component {
             {this.state.posts.map(post => (
               <li key={post.id} id={post.id}>
                 {post.title}
-                {post.media.map(media => (
-                  <img width='100px' key={media.hash} src={'https://storage.googleapis.com/socialpetwork-images/' + media.hash} />
+                {post.media.map((media, index) => (
+                  <img width='100px' id={index + media.hash} key={index + media.hash} src={'https://storage.googleapis.com/socialpetwork-images/' + media.hash} />
                 ))}
               </li>
             ))}

@@ -10,7 +10,7 @@ const formidable = require('formidable')
 const imageType = require('image-type')
 const readChunk = require('read-chunk')
 const md5File = require('md5-file/promise')
-const debug = require('debug')('socialpetwork-api:post:debug')
+const log = require('debug-with-levels')('socialpetwork-api:post')
 
 var storage = null
 
@@ -20,8 +20,11 @@ var gcpStorageCredentialString = process.env.GCP_STORAGE_CREDENTIALS
 
 async function saveFile () {
   const str = gcpStorageCredentialString
-  const secret = Buffer.from(str)
 
+  if (!str || str === '') {
+    throw new Error('GCP credentials not found in environment variable: GCP_STORAGE_CREDENTIALS')
+  }
+  const secret = Buffer.from(str)
   await writeFile('/tmp/gcpStorageCredentials.json', Base64.decode(secret))
 
   storage = new Storage({
@@ -35,13 +38,14 @@ module.exports = async (req, res) => {
 
   return new Promise(function (resolve, reject) {
     var form = new formidable.IncomingForm()
+    form.multiples = true
     form.parse(req, async function (err, fields, files) {
       if (err) return reject(err)
 
-      debug('files', files)
+      log.debug('files %o', files)
 
       var keys = Object.keys(files)
-      debug('1 keys', keys)
+      log.debug('1 keys %o', keys)
       var media = []
       for (var i = 0; i < keys.length; i++) {
         var path = files[keys[i]].path
@@ -53,15 +57,15 @@ module.exports = async (req, res) => {
         if (!typeOfImage) {
           reject(new Error('not an image'))
         }
-        debug(JSON.stringify(files[keys[i]]))
+        log.debug('file %o', files[keys[i]])
 
         var bucket = storage.bucket('socialpetwork-images')
         const file = bucket.file(hash)
 
         var fileAlreadyInGoogleStorage = await file.exists()
-        debug('filealreadinginstorage: ', fileAlreadyInGoogleStorage[0])
+        log.debug('filealreadinginstorage: ', fileAlreadyInGoogleStorage[0])
         if (!fileAlreadyInGoogleStorage[0]) {
-          debug('uploading', path)
+          log.debug('uploading: %s', path)
           try {
             var response = await bucket.upload(path, {
               destination: hash,
@@ -75,49 +79,50 @@ module.exports = async (req, res) => {
             reject(error)
           }
         } else {
-          debug('file found in GCP storage, not recreating')
+          log.debug('file found in GCP storage, not recreating')
         }
-        debug('deleting file: ', path)
+        log.debug('deleting file: %s', path)
         await deleteFile(path)
-        debug('hash', hash)
+        log.debug('hash %s', hash)
         media.push({ type: 'image', hash: hash, mimeType: typeOfImage.mime })
-        debug(response)
-        debug('uploaded')
+        log.debug('response %o', response)
+        log.debug('uploaded')
       }
       var url = 'mongodb://writer:' + mongoWriterPassword + '@' + mongoConnection
-      debug('connecting to mongo', url)
+      log.debug('connecting to mongo %s', url)
       var client = await MongoClient.connect(url, { useNewUrlParser: true })
-      debug('connected to mongo')
+      log.debug('connected to mongo')
       const db = client.db('socialpetwork-production')
-      debug('got db')
+      log.debug('got db')
       var posts = db.collection('posts')
-      debug('got collection')
+      log.debug('got collection')
       // const data = await json(req)
-      // debug('got data', data)
+      // log.debug('got data', data)
       var record = {
         title: fields.title,
         media: media,
         epoch: new Date().getTime()
       }
-      debug('record', record)
-      debug('inserting')
+      log.debug('record %o', record)
+      log.debug('inserting')
 
       var result = await posts.insertOne(record)
       if (result.err) reject(result.err)
-      debug('err from mongo: ', err)
-      debug('result from mongo: ', result.insertedId)
+      log.debug('err from mongo: %o', err)
+      log.debug('result from mongo: %o', result.insertedId)
       record._id = result.insertedId
       client.close()
       resolve(record)
     })
   }).then(function (result) {
-    debug('then resolved. sending response')
+    log.debug('then resolved. sending response')
     send(res, 200, {
       data: {
         inserted: result
       }
     })
   }).catch(function (error) {
+    log.error(error)
     send(res, 500, error)
   })
 }

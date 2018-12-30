@@ -14,7 +14,7 @@ class CreatePost extends Component {
     formData.append('title', values.title)
 
     for (let i = 0; i < values.files.length; i++) {
-      formData.append(`${values.files[i]}`, values.files[i])
+      formData.append('file' + i, values.files[i])
     }
 
     var res = await axios({
