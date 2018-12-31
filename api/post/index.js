@@ -19,11 +19,13 @@ var mongoWriterPassword = process.env.MONGO_WRITER_PASSWORD
 var gcpStorageCredentialString = process.env.GCP_STORAGE_CREDENTIALS
 
 async function saveFile () {
+  log.trace('saveFile')
   const str = gcpStorageCredentialString
 
   if (!str || str === '') {
     throw new Error('GCP credentials not found in environment variable: GCP_STORAGE_CREDENTIALS')
   }
+
   const secret = Buffer.from(str)
   await writeFile('/tmp/gcpStorageCredentials.json', Base64.decode(secret))
 
@@ -34,6 +36,7 @@ async function saveFile () {
 }
 
 module.exports = async (req, res) => {
+  log.trace('handle request')
   await saveFile()
 
   return new Promise(function (resolve, reject) {
@@ -93,11 +96,7 @@ module.exports = async (req, res) => {
       var client = await MongoClient.connect(url, { useNewUrlParser: true })
       log.debug('connected to mongo')
       const db = client.db('socialpetwork-production')
-      log.debug('got db')
       var posts = db.collection('posts')
-      log.debug('got collection')
-      // const data = await json(req)
-      // log.debug('got data', data)
       var record = {
         title: fields.title,
         media: media,
