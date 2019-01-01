@@ -1,43 +1,21 @@
 const { MongoClient } = require('mongodb')
 const { send } = require('micro')
-const { Base64 } = require('js-base64')
 const fs = require('fs')
 const util = require('util')
-const { Storage } = require('@google-cloud/storage')
-const writeFile = util.promisify(fs.writeFile)
 const deleteFile = util.promisify(fs.unlink)
 const formidable = require('formidable')
 const imageType = require('image-type')
 const readChunk = require('read-chunk')
 const md5File = require('md5-file/promise')
 const log = require('debug-with-levels')('socialpetwork-api:post')
-
-var storage = null
+const GcpStorage = require('@socialpetwork/common/gcp-storage')
+const gcpStorage = new GcpStorage()
 
 var mongoConnection = process.env.MONGO_CONNECTION
 var mongoWriterPassword = process.env.MONGO_WRITER_PASSWORD
-var gcpStorageCredentialString = process.env.GCP_STORAGE_CREDENTIALS
-
-async function saveFile () {
-  log.trace('saveFile')
-  const str = gcpStorageCredentialString
-
-  if (!str || str === '') {
-    throw new Error('GCP credentials not found in environment variable: GCP_STORAGE_CREDENTIALS')
-  }
-
-  const secret = Buffer.from(str)
-  await writeFile('/tmp/gcpStorageCredentials.json', Base64.decode(secret))
-
-  storage = new Storage({
-    projectId: 'focus-heuristic-220016',
-    keyFilename: '/tmp/gcpStorageCredentials.json'
-  })
-}
 
 module.exports = async (req, res) => {
   log.trace('handle request')
-  await saveFile()
 
   return new Promise(function (resolve, reject) {
     var form = new formidable.IncomingForm()
@@ -62,7 +40,7 @@ module.exports = async (req, res) => {
         }
         log.debug('file %o', files[keys[i]])
 
-        var bucket = storage.bucket('socialpetwork-images')
+        var bucket = await gcpStorage.getBucket('socialpetwork-images')
         const file = bucket.file(hash)
 
         var fileAlreadyInGoogleStorage = await file.exists()

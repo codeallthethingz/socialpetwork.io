@@ -14,7 +14,7 @@ function spawnMicro (info) {
       cwd: './www/', stdio: 'inherit'
     })
   } else {
-    newProcess = spawn('micro-dev', ['-sp ' + info.port, '-w .', '.'], {
+    newProcess = spawn('micro-dev', ['-sp ' + info.port, '-w .', '-w ../common', '.'], {
       cwd: './api/' + info.name + '/',
       stdio: 'inherit'
     })
