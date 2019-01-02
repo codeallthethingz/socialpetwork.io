@@ -9,6 +9,7 @@ import FormData from 'form-data'
 
 class CreatePost extends Component {
   onSubmit = async (values, { resetForm }) => {
+    this.props.onLoading()
     let formData = new FormData()
 
     formData.append('title', values.title)

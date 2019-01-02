@@ -1,6 +1,6 @@
 {
   "name": "@socialpetwork/common",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "dependencies": {
     "@google-cloud/storage": "^2.3.4",
     "debug-with-levels": "0.0.2",
@@ -12,6 +12,5 @@
     "mongodb": "^3.1.10",
     "read-chunk": "^3.0.0"
   },
-  "devDependencies": {
-  }
+  "devDependencies": {}
 }

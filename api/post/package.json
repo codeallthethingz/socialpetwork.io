@@ -1,15 +1,9 @@
 {
   "name": "socialpetwork-api-post",
   "dependencies": {
-    "@google-cloud/storage": "^2.3.4",
     "@socialpetwork/common": "latest",
     "debug-with-levels": "0.0.2",
     "formidable": "^1.2.1",
-    "image-type": "^3.0.0",
-    "js-base64": "^2.5.0",
-    "md5-file": "^4.0.0",
-    "micro": "^9.3.3",
-    "mongodb": "^3.1.10",
-    "read-chunk": "^3.0.0"
+    "micro": "^9.3.3"
   }
 }

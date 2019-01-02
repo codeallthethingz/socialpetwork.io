@@ -11,11 +11,15 @@ class RecentPosts extends Component {
       loading: true
     }
     this.loadValues = this.loadValues.bind(this)
+    this.onLoading = this.onLoading.bind(this)
   }
   componentDidMount () {
     this.loadValues()
   }
 
+  onLoading () {
+    this.setState({ loading: true })
+  }
   loadValues () {
     this.setState({ loading: true })
     axios.get(`/api/recentPosts/index.js`).then(res => {
@@ -29,7 +33,7 @@ class RecentPosts extends Component {
   render () {
     return (
       <div id='recentPosts'>
-        <CreatePost onChange={this.loadValues} />
+        <CreatePost onLoading={this.onLoading} onChange={this.loadValues} />
         <ul>
           {this.state.loading &&
           <li key='loading'>Loading...</li>

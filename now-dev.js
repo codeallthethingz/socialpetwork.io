@@ -54,5 +54,4 @@ proxy.listen(9000, (err) => {
   if (err) {
     throw err
   }
-  console.log(`**** Proxy serving on http://localhost:9000`)
 })

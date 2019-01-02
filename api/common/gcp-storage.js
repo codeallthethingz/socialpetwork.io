@@ -1,5 +1,8 @@
 const fs = require('fs')
 const util = require('util')
+const imageType = require('image-type')
+const readChunk = require('read-chunk')
+const md5File = require('md5-file/promise')
 const { Base64 } = require('js-base64')
 const { Storage } = require('@google-cloud/storage')
 const writeFile = util.promisify(fs.writeFile)
@@ -39,6 +42,44 @@ module.exports = class GcpStorage {
       this._initialized = true
     }
   }
+
+  async saveImage (path) {
+    log.trace('saveImage')
+    this._init()
+
+    const buffer = readChunk.sync(path, 0, 12)
+    var hash = await md5File(path)
+
+    var typeOfImage = imageType(buffer)
+    if (!typeOfImage) {
+      throw new Error('not an image')
+    }
+
+    var bucket = await this.getBucket('socialpetwork-images')
+    const file = bucket.file(hash)
+
+    var fileAlreadyInGoogleStorage = await file.exists()
+    if (!fileAlreadyInGoogleStorage[0]) {
+      log.debug('uploading: %s', path)
+
+      await bucket.upload(path, {
+        destination: hash,
+        gzip: true,
+        metadata: {
+          cacheControl: 'public, max-age=31536000',
+          contentType: typeOfImage.mime
+        }
+      })
+      log.debug('uploaded')
+    } else {
+      log.debug('file found in GCP storage, not recreating')
+    }
+    return {
+      hash: hash,
+      mime: typeOfImage.mime
+    }
+  }
+
   async _saveCredentialsFile (creds, location) {
     log.trace('saveFile')
     const secret = Buffer.from(creds)
@@ -51,7 +92,6 @@ module.exports = class GcpStorage {
     if (!this._buckets[bucketName]) {
       this._buckets[bucketName] = await this._bucketManager.bucket(bucketName)
     }
-    console.log(this._buckets)
     return this._buckets[bucketName]
   }
 }

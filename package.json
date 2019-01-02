@@ -31,5 +31,9 @@
       "node",
       "jest"
     ]
+  },
+  "jest": {
+    "coverageDirectory": "./coverage/",
+    "collectCoverage": true
   }
 }
