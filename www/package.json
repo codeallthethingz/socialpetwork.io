@@ -2,6 +2,7 @@
   "name": "socialpetwork-web",
   "dependencies": {
     "axios": "^0.18.0",
+    "classnames": "^2.2.6",
     "form-data": "^2.3.3",
     "formik": "^1.4.1",
     "next": "^7.0.2",
