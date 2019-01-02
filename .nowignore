@@ -1,9 +1,12 @@
 .code/
 .vscode/
 .idea/
-
 node_modules/
+coverage/
+.next/
 
-.next
 README.md
 rules.json
+jest.config.js
+**/*.test.js
+now-dev.js

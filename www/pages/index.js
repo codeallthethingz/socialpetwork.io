@@ -1,9 +1,9 @@
-import CreatePost from '../components/CreatePost'
 import Layout from '../components/Layout'
 
 const Index = () => (
   <Layout>
-    <CreatePost />
+    <img src='/static/img/dog-splash.jpg' width='400' />
+    <div>In progress</div>
   </Layout>
 )
 

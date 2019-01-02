@@ -1,0 +1,8 @@
+{
+  "name": "socialpetwork-api-recentposts",
+  "dependencies": {
+    "@socialpetwork/common": "latest",
+    "debug-with-levels": "0.0.2",
+    "micro": "^9.3.3"
+  }
+}

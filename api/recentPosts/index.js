@@ -1,29 +1,23 @@
-const { MongoClient } = require('mongodb')
-const debug = require('debug')('socialpetwork')
 const { send } = require('micro')
+var log = require('debug-with-levels')('socialpetwork-api:recentPosts')
 
-var mongoConnection = process.env.MONGO_CONNECTION
-var mongoReaderPassword = process.env.MONGO_READER_PASSWORD
+const Mongo = require('@socialpetwork/common/mongo')
+const mongo = new Mongo()
 
 module.exports = async (req, res) => {
-  var url = 'mongodb://reader:' + mongoReaderPassword + '@' + mongoConnection
+  log.trace('recentPosts')
+  try {
+    var posts = await mongo.getCollection('posts')
+    var recent = await posts.find({}).sort({ epoch: -1 }).limit(10).toArray()
+    log.debug('Recent listings: %d', recent.length)
 
-  debug('url', url)
-  var client = await MongoClient.connect(url)
-  debug('1', client)
-  const db = client.db('socialpetwork-production')
-  debug('2', db)
-  var posts = db.collection('posts')
-  debug('3', posts)
-  var recent = await posts.find({}).sort({ epoch: -1 }).toArray()
-  debug('4', recent)
-  client.close()
-  debug('5')
-  debug('req: ', req.headers)
-
-  send(res, 200, {
-    data: {
-      posts: recent
-    }
-  })
+    send(res, 200, {
+      data: {
+        posts: recent
+      }
+    })
+  } catch (error) {
+    log.error(error)
+    send(res, 500, 'something went wrong')
+  }
 }

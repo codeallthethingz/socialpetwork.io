@@ -1,0 +1,9 @@
+{
+  "name": "socialpetwork-api-post",
+  "dependencies": {
+    "@socialpetwork/common": "latest",
+    "debug-with-levels": "0.0.2",
+    "formidable": "^1.2.1",
+    "micro": "^9.3.3"
+  }
+}
