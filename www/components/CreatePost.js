@@ -12,7 +12,7 @@ class CreatePost extends Component {
     this.props.onLoading()
     let formData = new FormData()
 
-    formData.append('title', values.title)
+    formData.append('text', values.text)
 
     for (let i = 0; i < values.files.length; i++) {
       formData.append('file' + i, values.files[i])
@@ -32,7 +32,7 @@ class CreatePost extends Component {
   getSchema = () => {
     return yup.object().shape({
       files: yup.array(),
-      title: yup.string().required()
+      text: yup.string().required()
     })
   }
   onDrop (values, setFieldValue, acceptedFiles) {
@@ -43,13 +43,13 @@ class CreatePost extends Component {
     return (
       <div id='createPost'>
         <Formik
-          initialValues={{ files: [], title: '' }}
+          initialValues={{ files: [], text: '' }}
           validationSchema={this.getSchema}
           onSubmit={this.onSubmit}
           render={({ errors, setFieldValue, values }) => (
             <Form>
               Story
-              <Field component='textarea' label='Title' name='title' />
+              <Field component='textarea' name='text' />
 
               <Dropzone accept='image/*' onDrop={(acceptedFiles) => { this.onDrop(values, setFieldValue, acceptedFiles) }}>
                 {({ getRootProps, getInputProps, isDragActive }) => {
