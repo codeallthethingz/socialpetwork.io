@@ -13,6 +13,6 @@ export default class Thumb extends React.Component {
       }
       reader.readAsDataURL(this.props.file)
     }
-    return (<img src={this.state.thumb} height={50} />)
+    return (<img onClick={this.props.onClick} src={this.state.thumb} height={50} />)
   }
 }
