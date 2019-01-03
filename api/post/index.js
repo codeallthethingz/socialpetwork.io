@@ -27,7 +27,7 @@ module.exports = async (req, res) => {
       }
       var posts = await mongo.getCollection('posts')
       var record = {
-        title: fields.title,
+        text: fields.text,
         media: media,
         epoch: new Date().getTime()
       }
