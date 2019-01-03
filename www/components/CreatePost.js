@@ -36,7 +36,22 @@ class CreatePost extends Component {
     })
   }
   onDrop (values, setFieldValue, acceptedFiles) {
-    setFieldValue('files', values.files.concat(acceptedFiles))
+    var filteredFiles = acceptedFiles.filter((acceptedFile, index, array) => {
+      var found = false
+      values.files.forEach(element => {
+        if (element.name === acceptedFile.name) {
+          found = true
+        }
+      })
+      return !found
+    })
+    setFieldValue('files', values.files.concat(filteredFiles))
+  }
+  onClick (e, file, values, setFieldValue) {
+    console.log('index of file in values', values.files.indexOf(file))
+    values.files.splice(values.files.indexOf(file), 1)
+    setFieldValue('files', values.files)
+    e.preventDefault()
   }
 
   render () {
@@ -53,7 +68,8 @@ class CreatePost extends Component {
 
               <Dropzone accept='image/*' onDrop={(acceptedFiles) => { this.onDrop(values, setFieldValue, acceptedFiles) }}>
                 {({ getRootProps, getInputProps, isDragActive }) => {
-                  var thumbs = values && values.files ? values.files.map((file, i) => (<Thumb key={i} file={file} />)) : []
+                  var thumbs = values && values.files ? values.files.map((file, i) =>
+                    (<Thumb onClick={(e) => { this.onClick(e, file, values, setFieldValue) }} key={file.name} file={file} />)) : []
                   return (
                     <div {...getRootProps()} className={classNames('dropzone', { 'dropzone--isActive': isDragActive })} >
                       <input {...getInputProps()} />
