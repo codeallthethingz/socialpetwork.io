@@ -20,6 +20,13 @@ jobs:
           # fallback to using the latest cache if no exact match is found
           - v1-dependencies-
 
+      - run:
+          name: Authenticate with registry
+          command: echo "//registry.npmjs.org/:_authToken=$NPM_PUBLISH" > ~/socialpetwork.io/.npmrc
+      - run:
+          name: Publish package
+          command: npm publish api/common --access public || true
+
       - run: npm install
 
       - save_cache:
@@ -31,6 +38,7 @@ jobs:
       - run: npm test
 
       - run: node ./node_modules/.bin/codecov -t $CODECOV_TOKEN
+
 
   deploy-to-now:
     working_directory: ~/socialpetwork.io
