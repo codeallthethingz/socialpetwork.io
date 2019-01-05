@@ -9,8 +9,7 @@ const formidable = require('formidable')
 const log = require('debug-with-levels')('socialpetwork-api:post')
 const GcpStorage = require('@socialpetwork/common/gcp-storage')
 const gcpStorage = new GcpStorage()
-// const Mongo = require('@socialpetwork/common/mongo')
-const Mongo = require('../common/mongo')
+const Mongo = require('@socialpetwork/common/mongo')
 const mongo = new Mongo()
 
 const getPost = async (req, res) => {
