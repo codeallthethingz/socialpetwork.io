@@ -1,4 +1,7 @@
 const { send } = require('micro')
+
+const { router, get, post, del } = require('microrouter')
+
 const fs = require('fs')
 const util = require('util')
 const deleteFile = util.promisify(fs.unlink)
@@ -6,12 +9,49 @@ const formidable = require('formidable')
 const log = require('debug-with-levels')('socialpetwork-api:post')
 const GcpStorage = require('@socialpetwork/common/gcp-storage')
 const gcpStorage = new GcpStorage()
-const Mongo = require('@socialpetwork/common/mongo')
+// const Mongo = require('@socialpetwork/common/mongo')
+const Mongo = require('../common/mongo')
 const mongo = new Mongo()
 
-module.exports = async (req, res) => {
-  log.trace('handle request')
+const getPost = async (req, res) => {
+  log.trace('getPost: %j', req.params)
+  if (!req.params.id) {
+    send(res, 404, 'id not defined')
+    return
+  }
+  var post = await mongo.findById('posts', req.params.id)
 
+  if (!post) {
+    send(res, 404, 'id not found: ' + req.params.id)
+    return
+  }
+  log.debug('post: %o', post)
+  send(res, 200, post)
+}
+
+const deletePost = async (req, res) => {
+  log.trace('deletePost: %j', req.params)
+  if (!req.params.id) {
+    send(res, 404, 'id not defined')
+    return
+  }
+  var post = await mongo.findById('posts', req.params.id)
+
+  if (!post) {
+    send(res, 404, 'id not found: ' + req.params.id)
+    return
+  }
+  try {
+    await mongo.removeById('posts', req.params.id)
+  } catch (error) {
+    send(res, 500, 'could not delete: ' + error)
+  }
+  log.debug('deleted: %o', post)
+  send(res, 200, post)
+}
+
+const createPost = async (req, res) => {
+  log.trace('handle request')
   return new Promise(function (resolve, reject) {
     var form = new formidable.IncomingForm()
     form.multiples = true
@@ -48,3 +88,9 @@ module.exports = async (req, res) => {
     send(res, 500, error)
   })
 }
+
+module.exports = router(
+  post('/api/post', createPost),
+  get('/api/post/:id', getPost),
+  del('/api/post/:id', deletePost)
+)

@@ -24,7 +24,7 @@ function spawnMicro (info) {
 
 var running = []
 var proxyConfig = []
-var method = ['GET', 'POST', 'OPTIONS']
+var method = ['GET', 'POST', 'OPTIONS', 'DELETE', 'PUT']
 micros.forEach(micro => {
   running.push(spawnMicro(micro))
   if (micro.name === 'www') {
@@ -35,7 +35,7 @@ micros.forEach(micro => {
     })
   } else {
     proxyConfig.push({
-      'pathname': '/api/' + micro.name + '/index.js',
+      'pathname': '/api/' + micro.name + '**',
       method,
       'dest': 'http://localhost:' + micro.port
     })
