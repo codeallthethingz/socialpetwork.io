@@ -9,6 +9,9 @@ import FormData from 'form-data'
 
 class CreatePost extends Component {
   onSubmit = async (values, { resetForm }) => {
+    if (values.text.trim() === '') {
+      return
+    }
     this.props.onLoading()
     let formData = new FormData()
 
@@ -36,7 +39,7 @@ class CreatePost extends Component {
     })
   }
   onDrop (values, setFieldValue, acceptedFiles) {
-    var filteredFiles = acceptedFiles.filter((acceptedFile, index, array) => {
+    var filteredFiles = acceptedFiles.filter((acceptedFile) => {
       var found = false
       values.files.forEach(element => {
         if (element.name === acceptedFile.name) {
@@ -53,6 +56,13 @@ class CreatePost extends Component {
     e.preventDefault()
   }
 
+  keyDown (e, values, resetForm) {
+    if (e.metaKey && e.key === 'Enter') {
+      this.onSubmit(values, { resetForm })
+      e.preventDefault()
+    }
+  }
+
   render () {
     return (
       <div id='createPost'>
@@ -60,28 +70,26 @@ class CreatePost extends Component {
           initialValues={{ files: [], text: '' }}
           validationSchema={this.getSchema}
           onSubmit={this.onSubmit}
-          render={({ errors, setFieldValue, values }) => (
-            <Form>
-              Story
-              <Field component='textarea' name='text' />
-
-              <Dropzone accept='image/*' onDrop={(acceptedFiles) => { this.onDrop(values, setFieldValue, acceptedFiles) }}>
+          render={({ setFieldValue, values, resetForm }) => (
+            <Form >
+            Story
+              <Field component='textarea' name='text' onKeyDown={(e) => { this.keyDown(e, values, resetForm) }} />
+              <Dropzone onKeyDown={(e) => { this.keyDown(e, values, resetForm) }} accept='image/*' onDrop={(acceptedFiles) => { this.onDrop(values, setFieldValue, acceptedFiles) }}>
                 {({ getRootProps, getInputProps, isDragActive }) => {
                   var thumbs = values && values.files ? values.files.map((file, i) =>
                     (<Thumb onClick={(e) => { this.onClick(e, file, values, setFieldValue) }} key={file.name} file={file} />)) : []
                   return (
                     <div {...getRootProps()} className={classNames('dropzone', { 'dropzone--isActive': isDragActive })} >
                       <input {...getInputProps()} />
-                      { values.files.length === 0 &&
+                      {values.files.length === 0 &&
                       <p>Drop photos here or click to add</p>
                       }
-                      { thumbs }
+                      {thumbs}
                     </div>
                   )
                 }}
               </Dropzone>
-              {errors.files}
-              <button type='Submit'>Post</button>
+              <button onKeyDown={(e) => { this.keyDown(e, values, resetForm) }} type='Submit'>Post</button>
             </Form>
           )}
         />
