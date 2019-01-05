@@ -1,4 +1,4 @@
-const { MongoClient } = require('mongodb')
+const { MongoClient, ObjectID } = require('mongodb')
 const log = require('debug-with-levels')('socialpetwork-common:mongo')
 
 module.exports = class Mongo {
@@ -30,7 +30,18 @@ module.exports = class Mongo {
     return this._db
   }
   async getCollection (collectionName) {
-    log.trace('getCollection')
+    log.trace('getCollection(%s)', collectionName)
     return (await this.getDb()).collection(collectionName)
+  }
+  async findById (collectionName, id) {
+    log.trace('findById(%s, %s)', collectionName, id)
+    var collection = (await this.getDb()).collection(collectionName)
+    var obj = await collection.findOne({ '_id': ObjectID(id) })
+    return obj
+  }
+  async removeById (collectionName, id) {
+    log.trace('removeById(%s, %s)', collectionName, id)
+    var collection = (await this.getDb()).collection(collectionName)
+    await collection.remove({ '_id': ObjectID(id) })
   }
 }

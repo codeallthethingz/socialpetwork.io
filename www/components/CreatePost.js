@@ -20,7 +20,7 @@ class CreatePost extends Component {
 
     await axios({
       method: 'post',
-      url: '/api/post/index.js',
+      url: '/api/post',
       data: formData,
       config: { headers: { 'Content-Type': 'multipart/form-data' } }
     })
@@ -48,7 +48,6 @@ class CreatePost extends Component {
     setFieldValue('files', values.files.concat(filteredFiles))
   }
   onClick (e, file, values, setFieldValue) {
-    console.log('index of file in values', values.files.indexOf(file))
     values.files.splice(values.files.indexOf(file), 1)
     setFieldValue('files', values.files)
     e.preventDefault()
