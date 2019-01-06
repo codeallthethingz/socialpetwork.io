@@ -12,6 +12,8 @@ const gcpStorage = new GcpStorage()
 const Mongo = require('@socialpetwork/common/mongo')
 const mongo = new Mongo()
 
+const { getUserFromServerCookie } = require('./auth')
+
 const getPost = async (req, res) => {
   log.trace('getPost: %j', req.params)
   if (!req.params.id) {
@@ -51,6 +53,20 @@ const deletePost = async (req, res) => {
 
 const createPost = async (req, res) => {
   log.trace('handle request')
+  var username = 'anonymous'
+
+  var loggedUser = getUserFromServerCookie(req)
+  if (loggedUser) {
+    log.debug('JWT User: %j', loggedUser)
+    var users = await mongo.getCollection('users')
+    var user = await users.findOne({ email: loggedUser.email })
+    log.debug('Mongo User: %j', user)
+    if (!user) {
+      send(res, 401, 'User is not set up correctly to allow posts')
+      return
+    }
+    username = user.username
+  }
   return new Promise(function (resolve, reject) {
     var form = new formidable.IncomingForm()
     form.multiples = true
@@ -67,6 +83,7 @@ const createPost = async (req, res) => {
       var posts = await mongo.getCollection('posts')
       var record = {
         text: fields.text,
+        username: username,
         media: media,
         epoch: new Date().getTime()
       }

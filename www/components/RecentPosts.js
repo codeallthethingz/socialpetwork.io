@@ -34,7 +34,7 @@ class RecentPosts extends Component {
     axios.get('/api/recentPosts').then(res => {
       this.setState(function (state, props) {
         var posts = res.data && res.data.data && res.data.data.posts
-          ? res.data.data.posts.map(item => { return { id: item._id, media: item.media, text: item.text, epoch: item.epoch } }) : []
+          ? res.data.data.posts.map(item => { return { id: item._id, username: item.username, media: item.media, text: item.text, epoch: item.epoch } }) : []
         return { posts: posts, loading: false }
       })
     })
@@ -50,7 +50,7 @@ class RecentPosts extends Component {
           }
           {this.state.posts.map(post => (
             <li key={post.id} id={post.id} >
-              <p><Moment unix fromNow>{post.epoch / 1000}</Moment><br />{post.text}</p>
+              <p><Moment unix fromNow>{post.epoch / 1000}</Moment> by {post.username}<br />{post.text}</p>
               <div className='images'>
                 {post.media.map((media, index) => (
                   <img width='100px' id={index + media.hash} key={index + media.hash} src={'https://storage.googleapis.com/socialpetwork-images/' + media.hash} />
