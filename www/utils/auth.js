@@ -13,7 +13,6 @@ export const setToken = (idToken, accessToken) => {
   if (!process.browser) {
     return
   }
-  Cookie.set('user', jwtDecode(idToken))
   Cookie.set('idToken', idToken)
   Cookie.set('accessToken', accessToken)
 }
@@ -24,7 +23,6 @@ export const unsetToken = () => {
   }
   Cookie.remove('idToken')
   Cookie.remove('accessToken')
-  Cookie.remove('user')
 
   // to support logging out from all windows
   window.localStorage.setItem('logout', Date.now())
@@ -43,5 +41,6 @@ export const getUserFromServerCookie = (req) => {
 }
 
 export const getUserFromLocalCookie = () => {
-  return Cookie.getJSON('user')
+  var idToken = Cookie.get('idToken')
+  return idToken ? jwtDecode(idToken) : null
 }
