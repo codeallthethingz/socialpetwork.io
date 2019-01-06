@@ -12,7 +12,7 @@ const gcpStorage = new GcpStorage()
 const Mongo = require('@socialpetwork/common/mongo')
 const mongo = new Mongo()
 
-const { getUserFromServerCookie } = require('./auth')
+const { getUserFromServerCookie } = require('@socialpetwork/common/auth')
 
 const getPost = async (req, res) => {
   log.trace('getPost: %j', req.params)
