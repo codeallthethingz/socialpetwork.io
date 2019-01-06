@@ -19,7 +19,7 @@ class RecentPosts extends Component {
   delete (e, id) {
     axios.delete('/api/post/' + id).then(res => {
       var posts = this.state.posts.filter((post) => {
-        return post.id != id
+        return post.id !== id
       })
       this.setState({ posts: posts })
     })

@@ -17,6 +17,14 @@
   ],
   "routes": [
     {
+      "src": "/api/post/(.*)",
+      "dest": "/api/post"
+    },
+    {
+      "src": "/api/post",
+      "dest": "/api/post"
+    },
+    {
       "src": "/api/(.*)",
       "dest": "/api/$1"
     },
