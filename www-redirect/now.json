@@ -1,0 +1,13 @@
+{
+    "version": 2,
+    "name": "socialpetworkio-redirect",
+    "alias": [
+        "www.socialpetwork.io"
+    ],
+    "builds": [
+       { "src": "index.html", "use": "@now/static" }
+    ],
+    "routes": [
+       { "src": "/(.*)", "status": 301, "headers": { "Location": "https://socialpetwork.io/$1" }}
+    ]
+}
