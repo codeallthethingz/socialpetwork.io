@@ -29,11 +29,13 @@
   },
   "devDependencies": {
     "babel-eslint": "^10.0.1",
+    "edit-json-file": "^1.2.1",
     "jest": "^23.6.0",
-    "standard": "^12.0.1"
+    "standard": "^12.0.1",
+    "stmux": "^1.6.1"
   },
   "scripts": {
-    "dev": "node now-dev.js",
+    "dev": "node generate-script.js && stmux -M true -- [ [ -s 1 -t \"micro-proxy 9000\" \"cat proxy.json | jq -c .rules[] && micro-proxy -r proxy.json -p 9000\" .. [ -t curl \"zsh\" : -t \"npm ./www/ 3000\" \"cd ./www/ &&  MONGO_CONNECTION=$MONGO_CONNECTION MONGO_WRITER_PASSWORD=$MONGO_WRITER_PASSWORD DEBUG=$DEBUG GCP_STORAGE_CREDENTIALS=$GCP_STORAGE_CREDENTIALS JWT_SECRET=$JWT_SECRET npm run dev\" ] ] : [ -t \"micro-dev ./api/recentPosts/ 3001\" \"cd ./api/recentPosts/ &&  micro-dev -sp 3001 -w . -w ../common .\" .. -t \"micro-dev ./api/post/ 3002\" \"cd ./api/post/ &&  micro-dev -sp 3002 -w . -w ../common .\" ] ]",
     "test": "jest --coverage"
   },
   "repository": "git+https://github.com/codeallthethingz/socialpetwork.io.git",
