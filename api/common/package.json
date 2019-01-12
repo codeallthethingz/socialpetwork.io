@@ -1,17 +1,20 @@
 {
   "name": "@socialpetwork/common",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "dependencies": {
     "@google-cloud/storage": "^2.3.4",
     "debug-with-levels": "0.0.2",
     "formidable": "^1.2.1",
     "image-type": "^3.0.0",
     "js-base64": "^2.5.0",
+    "jsonwebtoken": "^8.4.0",
     "md5-file": "^4.0.0",
     "micro": "^9.3.3",
-    "jwt-decode": "^2.2.0",
     "mongodb": "^3.1.10",
+    "object.omit": "^3.0.0",
     "read-chunk": "^3.0.0"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "node-rsa": "^1.0.2"
+  }
 }

@@ -1,5 +1,18 @@
 const Mongo = require('./mongo')
 const { ObjectId } = require('mongodb')
+
+test('clean mongo fields', () => {
+  const mongo = new Mongo('connection', 'password', {})
+  var original = { _id: 'my idea', some: 'other' }
+  expect(mongo.clean(original)).toEqual({ id: 'my idea', some: 'other' })
+  expect(original).toEqual({ _id: 'my idea', some: 'other' })
+})
+test('clean mongo array', () => {
+  const mongo = new Mongo('connection', 'password', {})
+  var original = [{ _id: 'my idea', some: 'other' }]
+  expect(mongo.clean(original)).toEqual([{ id: 'my idea', some: 'other' }])
+  expect(original).toEqual([{ _id: 'my idea', some: 'other' }])
+})
 test('delete by id', async () => {
   var count = 0
   const mongo = new Mongo('connection', 'password', {

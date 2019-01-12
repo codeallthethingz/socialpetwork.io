@@ -1,5 +1,6 @@
 import jwtDecode from 'jwt-decode'
 import Cookie from 'js-cookie'
+import axios from 'axios'
 
 const getQueryParams = () => {
   const params = {}
@@ -7,6 +8,32 @@ const getQueryParams = () => {
     params[$1] = $3
   })
   return params
+}
+export const getMe = async () => {
+  try {
+    var me = await axios({
+      method: 'get',
+      url: '/api/user'
+    })
+    return me.data
+  } catch (error) {
+    console.log('getMe', error)
+  }
+}
+export const getMeFromServer = async (req) => {
+  try {
+    if (!req || !req.headers || !req.headers.referer) {
+      return null
+    }
+    var me = await axios({
+      method: 'get',
+      url: req.headers.referer + 'api/user',
+      headers: req.headers
+    })
+    return me.data
+  } catch (error) {
+    console.log('getmefromserver', error)
+  }
 }
 
 export const setToken = (idToken, accessToken) => {
@@ -37,10 +64,27 @@ export const getUserFromServerCookie = (req) => {
     return undefined
   }
   const jwt = jwtCookie.split('=')[1]
+  var claims = jwtDecode(jwt)
+  if (isExpired(claims)) {
+    return null
+  }
   return jwtDecode(jwt)
 }
 
 export const getUserFromLocalCookie = () => {
   var idToken = Cookie.get('idToken')
-  return idToken ? jwtDecode(idToken) : null
+  var claims = idToken ? jwtDecode(idToken) : null
+  if (isExpired(claims)) {
+    return null
+  }
+  return claims
+}
+
+function isExpired (claims) {
+  if (!claims || claims === null) {
+    return true
+  }
+  var dateNow = new Date()
+
+  return claims.exp < (dateNow.getTime() / 1000)
 }

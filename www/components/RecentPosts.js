@@ -34,7 +34,7 @@ class RecentPosts extends Component {
     axios.get('/api/recentPosts').then(res => {
       this.setState(function (state, props) {
         var posts = res.data && res.data.data && res.data.data.posts
-          ? res.data.data.posts.map(item => { return { id: item._id, username: item.username, media: item.media, text: item.text, epoch: item.epoch } }) : []
+          ? res.data.data.posts : []
         return { posts: posts, loading: false }
       })
     })

@@ -4,6 +4,7 @@ const { spawn } = require('child_process')
 var micros = [
   { name: 'recentPosts', port: 3001 },
   { name: 'post', port: 3002 },
+  { name: 'user', port: 3003 },
   { name: 'www', port: 3000 }
 ]
 
@@ -49,6 +50,7 @@ process.on('SIGINT', function (source, count) {
   }
 })
 
+console.log('Creating proxy with config: ', proxyConfig)
 const proxy = createProxy(proxyConfig)
 proxy.listen(9000, (err) => {
   if (err) {

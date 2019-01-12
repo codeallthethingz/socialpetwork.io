@@ -1,7 +1,5 @@
 const { send } = require('micro')
-
 const { router, get, post, del } = require('microrouter')
-
 const fs = require('fs')
 const util = require('util')
 const deleteFile = util.promisify(fs.unlink)
@@ -11,8 +9,7 @@ const GcpStorage = require('@socialpetwork/common/gcp-storage')
 const gcpStorage = new GcpStorage()
 const Mongo = require('@socialpetwork/common/mongo')
 const mongo = new Mongo()
-
-const { getUserFromServerCookie } = require('@socialpetwork/common/auth')
+const { getUserFromRequestJwt } = require('@socialpetwork/common/auth')
 
 const getPost = async (req, res) => {
   log.trace('getPost: %j', req.params)
@@ -26,8 +23,9 @@ const getPost = async (req, res) => {
     send(res, 404, 'id not found: ' + req.params.id)
     return
   }
-  log.debug('post: %o', post)
-  send(res, 200, post)
+  var returnPost = mongo.clean(post)
+  log.debug('post: %o', returnPost)
+  send(res, 200, returnPost)
 }
 
 const deletePost = async (req, res) => {
@@ -47,22 +45,23 @@ const deletePost = async (req, res) => {
   } catch (error) {
     send(res, 500, 'could not delete: ' + error)
   }
-  log.debug('deleted: %o', post)
-  send(res, 200, post)
+  var returnPost = mongo.clean(post)
+  log.debug('deleted: %o', returnPost)
+  send(res, 200, returnPost)
 }
 
 const createPost = async (req, res) => {
   log.trace('handle request')
   var username = 'anonymous'
 
-  var loggedUser = getUserFromServerCookie(req)
-  if (loggedUser) {
-    log.debug('JWT User: %j', loggedUser)
+  var socialUser = await getUserFromRequestJwt(req)
+  if (socialUser) {
+    log.debug('JWT User: %j', socialUser)
     var users = await mongo.getCollection('users')
-    var user = await users.findOne({ email: loggedUser.email })
+    var user = await users.findOne({ email: socialUser.email })
     log.debug('Mongo User: %j', user)
     if (!user) {
-      send(res, 401, 'User is not set up correctly to allow posts')
+      send(res, 401, 'User is not set up correctly to create posts, must have a row in the database with a username and email')
       return
     }
     username = user.username
@@ -90,7 +89,7 @@ const createPost = async (req, res) => {
       var result = await posts.insertOne(record)
       log.info('Inserted record %j', record)
       record._id = result.insertedId
-      resolve(record)
+      resolve(mongo.clean(record))
     })
   }).then(function (result) {
     log.debug('then resolved. sending response')

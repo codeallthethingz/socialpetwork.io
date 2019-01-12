@@ -13,7 +13,7 @@ module.exports = async (req, res) => {
 
     send(res, 200, {
       data: {
-        posts: recent
+        posts: mongo.clean(recent)
       }
     })
   } catch (error) {

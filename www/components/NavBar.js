@@ -2,14 +2,15 @@ import Link from 'next/link'
 import React from 'react'
 
 class NavBar extends React.Component {
-  render (props) {
+  render () {
+    var props = this.props
     var items = []
     items.push((<li key='home' className='nav-item active'>
       <Link href='/'>
         <a className='nav-link'>Home <span className='sr-only'>(current)</span></a>
       </Link>
     </li>))
-    if (!React.loggedUser) {
+    if (!props.socialUser) {
       items.push((
         <li key='sign-in' className='nav-item active'>
           <Link href='/auth/sign-in'>

@@ -56,6 +56,7 @@ jobs:
           command: |
             now --token $ZEIT_TOKEN \
             -e DEBUG="socialpetwork*" \
+            -e JWT_SECRET=$JWT_SECRET \
             -e MONGO_CONNECTION=$MONGO_CONNECTION_PRODUCTION \
             -e MONGO_WRITER_PASSWORD=$MONGO_WRITER_PASSWORD_PRODUCTION \
             -e MONGO_READER_PASSWORD=$MONGO_READER_PASSWORD_PRODUCTION  \
