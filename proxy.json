@@ -1,0 +1,48 @@
+{
+  "rules": [
+    {
+      "pathname": "/api/recentPosts**",
+      "method": [
+        "GET",
+        "POST",
+        "OPTIONS",
+        "DELETE",
+        "PUT"
+      ],
+      "dest": "http://localhost:3001"
+    },
+    {
+      "pathname": "/api/post**",
+      "method": [
+        "GET",
+        "POST",
+        "OPTIONS",
+        "DELETE",
+        "PUT"
+      ],
+      "dest": "http://localhost:3002"
+    },
+    {
+      "pathname": "/api/user**",
+      "method": [
+        "GET",
+        "POST",
+        "OPTIONS",
+        "DELETE",
+        "PUT"
+      ],
+      "dest": "http://localhost:3003"
+    },
+    {
+      "pathname": "/",
+      "method": [
+        "GET",
+        "POST",
+        "OPTIONS",
+        "DELETE",
+        "PUT"
+      ],
+      "dest": "http://localhost:3000"
+    }
+  ]
+}

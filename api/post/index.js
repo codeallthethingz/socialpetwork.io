@@ -42,6 +42,7 @@ const deletePost = async (req, res) => {
   }
   try {
     await mongo.removeById('posts', req.params.id)
+    log.info('removed post %s', req.params.id)
   } catch (error) {
     send(res, 500, 'could not delete: ' + error)
   }

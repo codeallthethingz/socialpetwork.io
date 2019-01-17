@@ -68,19 +68,20 @@ export const getUserFromServerCookie = (req) => {
   if (isExpired(claims)) {
     return null
   }
-  return jwtDecode(jwt)
+  return claims
 }
 
 export const getUserFromLocalCookie = () => {
   var idToken = Cookie.get('idToken')
   var claims = idToken ? jwtDecode(idToken) : null
   if (isExpired(claims)) {
+    unsetToken()
     return null
   }
   return claims
 }
 
-function isExpired (claims) {
+export const isExpired = (claims) => {
   if (!claims || claims === null) {
     return true
   }
