@@ -23,7 +23,7 @@ test('delete by id', async () => {
             collection: (collectionName) => {
               expect(collectionName).toEqual('posts')
               return {
-                remove: (obj) => {
+                deleteOne: (obj) => {
                   expect(obj._id).toEqual(ObjectId('5c302522ac45522e410e0576'))
                   count++
                 }

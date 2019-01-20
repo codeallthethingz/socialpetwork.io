@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken')
 const { Base64 } = require('js-base64')
 
 test('with certificate', async () => {
-  const key = new NodeRSA({ b: 2048 })
+  const key = new NodeRSA({ b: 512 })
   const pubKey = key.exportKey('pkcs1-public-pem')
   const priKey = key.exportKey('pkcs1-private-pem')
   var signed = jwt.sign({ email: 'enc@example.com' }, priKey, { algorithm: 'RS256' })
