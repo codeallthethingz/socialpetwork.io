@@ -61,7 +61,7 @@ const createPost = async (req, res) => {
     var users = await mongo.getCollection('users')
     var user = await users.findOne({ email: socialUser.email })
     log.debug('Mongo User: %j', user)
-    if (!user) {
+    if (!user || !user.username) {
       send(res, 401, 'User is not set up correctly to create posts, must have a row in the database with a username and email')
       return
     }

@@ -59,10 +59,16 @@ jobs:
             -e JWT_SECRET=$JWT_SECRET \
             -e MONGO_CONNECTION=$MONGO_CONNECTION_PRODUCTION \
             -e MONGO_WRITER_PASSWORD=$MONGO_WRITER_PASSWORD_PRODUCTION \
-            -e MONGO_READER_PASSWORD=$MONGO_READER_PASSWORD_PRODUCTION  \
             -e GCP_STORAGE_CREDENTIALS=$GCP_STORAGE_CREDENTIALS
             now --token $ZEIT_TOKEN alias
 
+      - run:
+          name: Now redirect deploy
+          command: |
+            cd www-redirect
+            now --token $ZEIT_TOKEN
+            now --token $ZEIT_TOKEN alias
+            
 workflows:
   version: 2
   master:

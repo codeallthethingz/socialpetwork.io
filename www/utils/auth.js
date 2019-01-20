@@ -17,7 +17,8 @@ export const getMe = async () => {
     })
     return me.data
   } catch (error) {
-    console.log('getMe', error)
+    unsetToken()
+    console.log('was broser: ', process.browser, 'getMe', error)
   }
 }
 export const getMeFromServer = async (req) => {
@@ -25,13 +26,18 @@ export const getMeFromServer = async (req) => {
     if (!req || !req.headers || !req.headers.referer) {
       return null
     }
+    var referer = req.headers.referer
+    if (referer.indexOf('/', 9) !== -1) {
+      referer = referer.substring(0, referer.indexOf('/', 9) + 1)
+    }
     var me = await axios({
       method: 'get',
-      url: req.headers.referer + 'api/user',
+      url: referer + 'api/user',
       headers: req.headers
     })
     return me.data
   } catch (error) {
+    unsetToken()
     console.log('getmefromserver', error)
   }
 }

@@ -22,7 +22,7 @@ class NavBar extends React.Component {
       items.push((
         <li key='sign-off' className='nav-item active'>
           <Link href='/auth/sign-off'>
-            <a className='nav-link'>Sign Out <span className='sr-only'>(current)</span></a>
+            <a className='nav-link'>Sign Out { props.dbUser.username } <span className='sr-only'>(current)</span></a>
           </Link>
         </li>
       ))

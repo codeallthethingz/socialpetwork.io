@@ -75,11 +75,11 @@ async function writeProxy () {
   await writeFile('proxy.json', JSON.stringify(proxyConfig, null, 2))
 }
 writeProxy()
-var proxyComm = '-s 1 -t "micro-proxy 9000" "cat proxy.json | jq -c .rules[] && sleep 5 && micro-proxy -r proxy.json -p 9000"'
+var proxyComm = '-t "micro-proxy 9000" "cat proxy.json | jq -c \'.rules[] | { pathname, dest}\'  && sleep 5 && micro-proxy -r proxy.json -p 9000"'
 var curlComm = '-t curl "zsh"'
 var nextComm = commands.splice(commands.length - 1, 1)
 var microsComm = commands.join(' .. ')
-var stmuxCommand = '[ [ ' + proxyComm + ' .. ' + curlComm + ' .. ' + nextComm + ' ] : [ ' + microsComm + ' ] ]'
+var stmuxCommand = '[ [ [ ' + curlComm + ' : ' + proxyComm + ' ] .. ' + nextComm + ' ] : [ ' + microsComm + ' ] ]'
 var scriptCommand = 'node generate-script.js && stmux -M true -- ' + stmuxCommand
 
 let packageJson = editJsonFile('package.json')

@@ -31,7 +31,6 @@ class CreatePost extends Component {
     this.props.onChange()
   }
 
-  // example of validation with yup
   getSchema = () => {
     return yup.object().shape({
       files: yup.array(),
