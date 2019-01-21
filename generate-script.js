@@ -2,6 +2,8 @@ const editJsonFile = require('edit-json-file')
 const fs = require('fs')
 const util = require('util')
 const writeFile = util.promisify(fs.writeFile)
+var _ = require('lodash')
+
 var env = [
   'MONGO_CONNECTION',
   'MONGO_WRITER_PASSWORD',
@@ -54,7 +56,18 @@ function create (command, params, config) {
 var commands = []
 var proxyConfig = { rules: [] }
 var method = ['GET', 'POST', 'OPTIONS', 'DELETE', 'PUT']
+var devDependencies = {}
+var dependencies = {}
+
+let microPackageJson = editJsonFile('api/common/package.json')
+_.merge(dependencies, microPackageJson.get('dependencies'))
+_.merge(devDependencies, microPackageJson.get('devDependencies'))
+
 micros.forEach(micro => {
+  let microPackageJson = editJsonFile(micro.name + '/package.json')
+  _.merge(dependencies, microPackageJson.get('dependencies'))
+  _.merge(devDependencies, microPackageJson.get('devDependencies'))
+
   commands.push(createCommand(micro))
   if (micro.name === 'www') {
     proxyConfig.rules.push({
@@ -84,6 +97,8 @@ var scriptCommand = 'node generate-script.js && stmux -M true -- ' + stmuxComman
 
 let packageJson = editJsonFile('package.json')
 packageJson.set('scripts.dev', scriptCommand)
+packageJson.set('dependencies', dependencies)
+packageJson.set('devDependencies', devDependencies)
 packageJson.save()
 
 if (missingVariable) {
