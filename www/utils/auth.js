@@ -1,5 +1,6 @@
 import jwtDecode from 'jwt-decode'
 import Cookie from 'js-cookie'
+import axios from 'axios'
 
 const getQueryParams = () => {
   const params = {}
@@ -8,12 +9,43 @@ const getQueryParams = () => {
   })
   return params
 }
+export const getMe = async () => {
+  try {
+    var me = await axios({
+      method: 'get',
+      url: '/api/user'
+    })
+    return me.data
+  } catch (error) {
+    unsetToken()
+    console.log('was broser: ', process.browser, 'getMe', error)
+  }
+}
+export const getMeFromServer = async (req) => {
+  try {
+    if (!req || !req.headers || !req.headers.referer) {
+      return null
+    }
+    var referer = req.headers.referer
+    if (referer.indexOf('/', 9) !== -1) {
+      referer = referer.substring(0, referer.indexOf('/', 9) + 1)
+    }
+    var me = await axios({
+      method: 'get',
+      url: referer + 'api/user',
+      headers: req.headers
+    })
+    return me.data
+  } catch (error) {
+    unsetToken()
+    console.log('getmefromserver', error)
+  }
+}
 
 export const setToken = (idToken, accessToken) => {
   if (!process.browser) {
     return
   }
-  Cookie.set('user', jwtDecode(idToken))
   Cookie.set('idToken', idToken)
   Cookie.set('accessToken', accessToken)
 }
@@ -24,7 +56,6 @@ export const unsetToken = () => {
   }
   Cookie.remove('idToken')
   Cookie.remove('accessToken')
-  Cookie.remove('user')
 
   // to support logging out from all windows
   window.localStorage.setItem('logout', Date.now())
@@ -39,9 +70,28 @@ export const getUserFromServerCookie = (req) => {
     return undefined
   }
   const jwt = jwtCookie.split('=')[1]
-  return jwtDecode(jwt)
+  var claims = jwtDecode(jwt)
+  if (isExpired(claims)) {
+    return null
+  }
+  return claims
 }
 
 export const getUserFromLocalCookie = () => {
-  return Cookie.getJSON('user')
+  var idToken = Cookie.get('idToken')
+  var claims = idToken ? jwtDecode(idToken) : null
+  if (isExpired(claims)) {
+    unsetToken()
+    return null
+  }
+  return claims
+}
+
+export const isExpired = (claims) => {
+  if (!claims || claims === null) {
+    return true
+  }
+  var dateNow = new Date()
+
+  return claims.exp < (dateNow.getTime() / 1000)
 }

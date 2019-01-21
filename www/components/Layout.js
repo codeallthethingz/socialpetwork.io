@@ -32,7 +32,7 @@ class Layout extends React.Component {
           <link rel='stylesheet' href='https://bootswatch.com/4/minty/bootstrap.css' key='theme' />
           <link rel='stylesheet' href='/static/css/main.css' key='overrides' />
         </Head>
-        <NavBar />
+        <NavBar socialUser={this.props.socialUser} dbUser={this.props.dbUser} />
         <div className='container'>
           {this.props.children}
         </div>

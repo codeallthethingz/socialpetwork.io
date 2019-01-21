@@ -1,4 +1,5 @@
 const { MongoClient, ObjectID } = require('mongodb')
+const omit = require('object.omit')
 const log = require('debug-with-levels')('socialpetwork-common:mongo')
 
 module.exports = class Mongo {
@@ -42,6 +43,24 @@ module.exports = class Mongo {
   async removeById (collectionName, id) {
     log.trace('removeById(%s, %s)', collectionName, id)
     var collection = (await this.getDb()).collection(collectionName)
-    await collection.remove({ '_id': ObjectID(id) })
+    await collection.deleteOne({ '_id': ObjectID(id) })
+  }
+
+  clean (obj) {
+    if (Array.isArray(obj)) {
+      var newArray = []
+      for (var i = 0; i < obj.length; i++) {
+        newArray.push(this.cleanObject(obj[i]))
+      }
+      return newArray
+    } else {
+      return this.cleanObject(obj)
+    }
+  }
+
+  cleanObject (obj) {
+    var newObj = omit(obj, '_id')
+    newObj.id = obj._id
+    return newObj
   }
 }

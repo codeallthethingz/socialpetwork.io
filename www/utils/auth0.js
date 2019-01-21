@@ -18,5 +18,6 @@ const getOptions = (container) => {
 }
 
 export const authorize = () => getAuth0().authorize(getOptions())
+export const renew = (cb) => getAuth0().renewAuth(getOptions(),cb)
 export const logout = () => getAuth0().logout({ returnTo: getBaseUrl() })
 export const parseHash = (callback) => getAuth0().parseHash(callback)
