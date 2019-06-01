@@ -47,7 +47,7 @@ function create (command, params, config) {
         console.error('Could not find env variable: ' + variable + ' will exit')
         missingVariable = true
       }
-      envInfo += ' ' + variable + '="$' + variable + '"'
+      envInfo += ' ' + variable + '="${' + variable + '}"'
     }
   }
   return '-t "' + command + ' ' + config.cwd + ' ' + config.port + '" "cd ' + config.cwd + ' && ' + envInfo + ' ' + command + ' ' + params.join(' ') + '"'

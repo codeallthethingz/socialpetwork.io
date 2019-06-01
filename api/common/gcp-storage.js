@@ -51,6 +51,7 @@ module.exports = class GcpStorage {
     var hash = await md5File(path)
 
     var typeOfImage = imageType(buffer)
+    log.debug('image type: %j', typeOfImage)
     if (!typeOfImage) {
       throw new Error('not an image')
     }
@@ -83,7 +84,19 @@ module.exports = class GcpStorage {
   async _saveCredentialsFile (creds, location) {
     log.trace('saveFile')
     const secret = Buffer.from(creds)
-    await writeFile(location, Base64.decode(secret))
+    var contents = '{\n' +
+    '  "type": "service_account",\n' +
+    '  "project_id": "focus-heuristic-220016",\n' +
+    '  "private_key_id": "1210b61d161b7cf8618e1a89972b35656f820e70",\n' +
+    '  "private_key": "-----BEGIN PRIVATE KEY-----\\n' + Base64.decode(secret).trim().replace(/\n/g, '\\n') + '\\n-----END PRIVATE KEY-----\\n",\n' +
+    '  "client_email": "socialpetwork-images@focus-heuristic-220016.iam.gserviceaccount.com",\n' +
+    '  "client_id": "110243778463996458045",\n' +
+    '  "auth_uri": "https://accounts.google.com/o/oauth2/auth",\n' +
+    '  "token_uri": "https://oauth2.googleapis.com/token",\n' +
+    '  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",\n' +
+    '  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/socialpetwork-images%40focus-heuristic-220016.iam.gserviceaccount.com"\n' +
+  '}\n'
+    await writeFile(location, contents)
   }
 
   async getBucket (bucketName) {

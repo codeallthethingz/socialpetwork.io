@@ -89,7 +89,7 @@ test('credentials file created', async () => {
   var credsStorageLocation = '/tmp/hello'
   var gcpStorage = new GcpStorage(creds, credsStorageLocation, null)
   gcpStorage._saveCredentialsFile(creds, credsStorageLocation)
-  expect((await readFile(credsStorageLocation, 'utf8'))).toEqual('hello world')
+  expect((await readFile(credsStorageLocation, 'utf8'))).toEqual('{   "type": "service_account",   "project_id": "focus-heuristic-220016",   "private_key_id": "8fb300a4f719cd97375fb24235f6f34be2eb924b",   "private_key": "-----BEGIN PRIVATE KEY-----\\nhello world\\n-----END PRIVATE KEY-----\\n",   "client_email": "socialpetwork-images@focus-heuristic-220016.iam.gserviceaccount.com",   "client_id": "110243778463996458045",   "auth_uri": "https://accounts.google.com/o/oauth2/auth",   "token_uri": "https://oauth2.googleapis.com/token",   "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",   "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/socialpetwork-images%40focus-heuristic-220016.iam.gserviceaccount.com" }\n')
 })
 
 test('credentials missing', async () => {
