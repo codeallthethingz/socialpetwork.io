@@ -33,7 +33,7 @@
     "jwt-decode": "^2.2.0",
     "moment": "^2.23.0",
     "prop-types": "^15.6.2",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.13",
     "object.omit": "^3.0.0"
   },
   "devDependencies": {
