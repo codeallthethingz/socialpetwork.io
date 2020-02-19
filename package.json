@@ -7,7 +7,7 @@
     "@socialpetwork/common": "latest",
     "axios": "^0.18.1",
     "classnames": "^2.2.6",
-    "codecov": "^3.1.0",
+    "codecov": "^3.6.5",
     "debug-with-levels": "0.0.2",
     "form-data": "^2.3.3",
     "formidable": "^1.2.1",
