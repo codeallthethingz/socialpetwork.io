@@ -11,7 +11,7 @@
     "lodash": "^4.17.13",
     "md5-file": "^4.0.0",
     "micro": "^9.3.3",
-    "mongodb": "^3.1.10",
+    "mongodb": "^3.1.13",
     "object.omit": "^3.0.0",
     "read-chunk": "^3.0.0"
   },
